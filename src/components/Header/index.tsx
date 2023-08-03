@@ -44,8 +44,8 @@ const styles = StyleSheet.create({
   headerContent: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginStart: 15,
-    marginEnd: 15,
+    marginStart: 16,
+    marginEnd: 16,
     marginTop: 24
   },
   headerTitle: {
