@@ -1,8 +1,10 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 export function Header() {
+  const { navigate } = useNavigation();
   return (
     <View style={styles.header}>
       <View style={styles.headerContent}>
@@ -12,7 +14,7 @@ export function Header() {
         <View style={styles.headerActions}>
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => {}}
+            onPress={() => navigate('Add')}
           >
             <Feather name="plus" size={24} color="#FFFFFF" />
           </TouchableOpacity>
