@@ -1,13 +1,14 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { Header } from "../../components/Header";
+import { ListItem } from "../../components/ListItem";
 
 export function List() {
   return (
     <View>
       <Header />
-      <Text>
-        Lista de ações
-      </Text>
+      <ListItem />
+      <ListItem />
+      <ListItem />
     </View>
   );
 }
