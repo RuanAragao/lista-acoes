@@ -15,7 +15,7 @@ export function SubHeader({ title }: Props) {
         activeOpacity={0.7}
         onPress={() => goBack()}
       >
-        <Feather name="chevron-left" size={32} color="#002E58" />
+        <Feather name="chevron-left" size={24} color="#002E58" />
       </TouchableOpacity>
       <Text style={styles.title}>
         {title}
@@ -30,13 +30,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingStart: 10,
     paddingEnd: 16,
-    paddingTop: 16,
-    paddingBottom: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
     backgroundColor: "#2DBBF9",
     gap: 12
   },
   title: {
     color: "#002E58",
-    fontSize: 32
+    fontSize: 22
   }
 });
