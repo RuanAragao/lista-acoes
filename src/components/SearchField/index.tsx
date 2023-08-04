@@ -4,26 +4,21 @@ import {
   View
 } from "react-native";
 import { Feather } from '@expo/vector-icons';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { BASE_URL } from '../../config/axios';
 
-export function SearchField({onSearch}) {
-  const response = [
-    {
-      "shortName": "PETROBRAS   PN      N2",
-      "symbol": "PETR4"
-    },
-    {
-      "shortName": "IBOVESPA",
-      "symbol": "^BVSP"
-    },
-    {
-      "shortName": "FII XP LOG  CI",
-      "symbol": "XPLG11"
-    },
-  ];
+export function SearchField({onSearch}: {onSearch: Function}) {
+  const [searchText, setSearchText] = useState<string>('');
 
-  function handleSearch() {
-    onSearch(response);
-  }
+  useEffect(() => {
+    axios.get(`${BASE_URL}/quote/${searchText}`)
+      .then((result) => {
+        if (!result["error"]) onSearch(result.data.results);
+      }).catch((err) => {
+        console.log(err);
+      });
+  }, [searchText]);
 
   return (
     <View style={styles.fieldWrapper}>
@@ -31,7 +26,8 @@ export function SearchField({onSearch}) {
       <TextInput
         style={styles.fieldInput}
         placeholder="PESQUISE PELO ATIVO"
-        onTextInput={handleSearch}
+        value={searchText}
+        onChangeText={(text) => setSearchText((text)?.toUpperCase())}
       />
     </View>
   );

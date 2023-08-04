@@ -11,10 +11,7 @@ type ActiveProps = {
   shortName: string
 }
 
-export function AddItem({
-  symbol="XXXX",
-  shortName="XXXXX XXX XX"
-}: ActiveProps) {
+export function AddItem({ symbol, shortName }: ActiveProps) {
   return (
     <View style={styles.itemWrapper}>
       <View style={styles.itemNames}>
