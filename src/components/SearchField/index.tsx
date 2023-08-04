@@ -6,18 +6,23 @@ import {
 import { Feather } from '@expo/vector-icons';
 import axios from "axios";
 import { useEffect, useState } from "react";
+import debounce from "lodash.debounce";
 import { BASE_URL } from '../../config/axios';
 
 export function SearchField({onSearch}: {onSearch: Function}) {
   const [searchText, setSearchText] = useState<string>('');
 
   useEffect(() => {
-    axios.get(`${BASE_URL}/quote/${searchText}`)
-      .then((result) => {
-        if (!result["error"]) onSearch(result.data.results);
-      }).catch((err) => {
-        console.log(err);
-      });
+    const fetch = debounce(() => {
+      axios.get(`${BASE_URL}/quote/${searchText}`)
+        .then((result) => {
+          if (!result["error"]) onSearch(result.data.results);
+        }).catch((err) => {
+          console.log(err);
+        });
+    }, 300);
+    fetch();
+    return () => { fetch.cancel() }
   }, [searchText]);
 
   return (
@@ -26,8 +31,11 @@ export function SearchField({onSearch}: {onSearch: Function}) {
       <TextInput
         style={styles.fieldInput}
         placeholder="PESQUISE PELO ATIVO"
+        autoCapitalize="none"
+        secureTextEntry={true}
+        keyboardType={"visible-password"}
         value={searchText}
-        onChangeText={(text) => setSearchText((text)?.toUpperCase())}
+        onChangeText={ query => setSearchText(query?.toUpperCase())}
       />
     </View>
   );
