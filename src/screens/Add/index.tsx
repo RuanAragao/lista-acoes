@@ -20,7 +20,7 @@ type ItemProps = {
 export function Add() {
   const [resultList, setResultList] = useState([]);
 
-  function handleSearch(response: Array<String>) {
+  function handleSearch(response: string[]) {
     setResultList(response);
   }
 

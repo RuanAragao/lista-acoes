@@ -27,18 +27,11 @@ export function List() {
       })
   }, []);
 
-  console.log(quoteResponseList)
-
-  const data = {
-    "regularMarketChange": -0.62999916,
-    "regularMarketChangePercent": -2.0375135,
-  }
   return (
     <View>
       <Header />
       <FlatList
         data={quoteResponseList}
-        keyExtractor={(item) => item}
         renderItem={({ item }) => <ListItem key={item?.symbol} quote={item} />}
       />
     </View>
