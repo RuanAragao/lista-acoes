@@ -2,16 +2,38 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  GestureResponderEvent
 } from 'react-native'
+import { useState } from 'react';
 import { Feather } from '@expo/vector-icons';
+import { MMKV } from 'react-native-mmkv'
 
-type ActiveProps = {
+const storage = new MMKV({ id: 'quote_list'})
+
+type AddItemProps = {
   symbol: string,
   shortName: string
 }
 
-export function AddItem({ symbol, shortName }: ActiveProps) {
+function addItemToStorage (symbol: string): void {
+  storage.set('list', JSON.stringify([
+    ...JSON.parse(storage.getString('list') || '[]'),
+    symbol
+  ]));
+}
+
+export function AddItem({ symbol, shortName }: AddItemProps) {
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  const handleAddItem = (event: GestureResponderEvent): void => {
+    addItemToStorage(symbol);
+    setFeedback(`Added to your list`);
+    setTimeout(() => {
+      setFeedback(null);
+    }, 3000);
+  }
+
   return (
     <View style={styles.itemWrapper}>
       <View style={styles.itemNames}>
@@ -20,8 +42,10 @@ export function AddItem({ symbol, shortName }: ActiveProps) {
       </View>
       <TouchableOpacity
         activeOpacity={0.7}
+        onPress={handleAddItem}
       >
-        <Feather name="plus" size={24} color="#002E58" />
+        {!feedback && <Feather name="plus" size={24} color="#002E58" />}
+        {feedback && <Feather name="check" size={24} color="green" />}
       </TouchableOpacity>
     </View>
   )
@@ -48,5 +72,10 @@ const styles = StyleSheet.create({
   itemShortName: {
     fontSize: 18,
     color: "#002E58"
-  }
+  },
+  feedback: {
+    fontSize: 14,
+    color: 'green',
+    marginTop: 4,
+  },
 });
