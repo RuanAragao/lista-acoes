@@ -11,6 +11,7 @@ import { SearchField } from "../../components/SearchField";
 import { AddItem } from "../../components/AddItem";
 
 type ItemProps = {
+  length: number;
   item: {
     symbol: string,
     shortName: string
@@ -18,16 +19,15 @@ type ItemProps = {
 }
 
 export function Add() {
-  const [resultList, setResultList] = useState([]);
+  const [resultList, setResultList] = useState<ItemProps>([]);
 
-  function handleSearch(response: string[]) {
+  const handleSearch = (response: ItemProps[]): void => {
     setResultList(response);
-  }
+  };
 
-  let renderResult;
-  if (!resultList) {
-    renderResult = <Text style={styles.noResult}>Nenhum resultado encontrado</Text>
-  }
+  const renderResult = resultList.length === 0 ? (
+    <Text style={styles.noResult}>Nenhum resultado encontrado</Text>
+  ) : null;
 
   return (
     <View>

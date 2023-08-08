@@ -23,7 +23,7 @@ export function List() {
   useEffect(() => {
     axios.get(`${BASE_URL}/quote/${ticketListString}`)
       .then((result) => {
-        if (!result["error"]) setQuoteResponseList(result.data.results);
+        if (result && !result?.error) setQuoteResponseList(result.data.results);
       })
   }, []);
 

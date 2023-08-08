@@ -9,21 +9,44 @@ import { useEffect, useState } from "react";
 import debounce from "lodash.debounce";
 import { BASE_URL } from '../../config/axios';
 
-export function SearchField({onSearch}: {onSearch: Function}) {
+interface SearchFieldProps {
+  onSearch: (response: never[]) => void;
+}
+
+export function SearchField({onSearch}: SearchFieldProps) {
   const [searchText, setSearchText] = useState<string>('');
 
   useEffect(() => {
-    const fetch = debounce(() => {
-      axios.get(`${BASE_URL}/quote/${searchText}`)
-        .then((result) => {
-          if (!result["error"]) onSearch(result.data.results);
-        }).catch((err) => {
-          console.log(err);
-        });
+    const fetchResults = debounce(() => {
+      if (searchText) {
+        performSearch();
+      }
     }, 300);
-    fetch();
-    return () => { fetch.cancel() }
+
+    fetchResults();
+    
+    return () => {
+      fetchResults.cancel();
+    };
   }, [searchText]);
+
+  const performSearch = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/quote/${searchText}`);
+      const results = response.data?.results || [];
+      if (results.length > 0 && results[0].regularMarketTime) {
+        onSearch(results);
+      } else {
+        onSearch([]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleTextChange = (query: string) => {
+    setSearchText(query.toUpperCase());
+  };
 
   return (
     <View style={styles.fieldWrapper}>
@@ -31,11 +54,9 @@ export function SearchField({onSearch}: {onSearch: Function}) {
       <TextInput
         style={styles.fieldInput}
         placeholder="PESQUISE PELO ATIVO"
-        autoCapitalize="none"
-        secureTextEntry={true}
-        keyboardType={"visible-password"}
+        autoCapitalize="characters"
         value={searchText}
-        onChangeText={ query => setSearchText(query?.toUpperCase())}
+        onChangeText={handleTextChange}
       />
     </View>
   );
