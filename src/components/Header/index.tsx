@@ -1,10 +1,14 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 
-export function Header() {
-  const { navigate } = useNavigation();
+interface HeaderProps {
+  refreshCallback: () => void;
+}
+
+export function Header({ refreshCallback }: HeaderProps) {
+  const { navigate } = useNavigation<NavigationProp<ReactNavigation.RootParamList>>();
   return (
     <View style={styles.header}>
       <View style={styles.headerContent}>
@@ -20,7 +24,7 @@ export function Header() {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => {}}
+            onPress={refreshCallback}
           >
             <Feather name="refresh-cw" size={24} color="#FFFFFF" />
           </TouchableOpacity>

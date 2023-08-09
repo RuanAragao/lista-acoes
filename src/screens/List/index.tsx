@@ -6,12 +6,13 @@ import {
 } from "react-native";
 import { Header } from "../../components/Header";
 import { ListItem } from "../../components/ListItem";
+import { Notify } from "../../components/Notify";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../config/axios";
 import { MMKV } from 'react-native-mmkv'
 
-const storage = new MMKV()
+const storage = new MMKV({ id: 'quote_list' })
 
 export function List() {
   // const ticketList = [
@@ -28,26 +29,38 @@ export function List() {
   const ticketList = JSON.parse(storage.getString('list') || '[]');
   const ticketListString = ticketList.join("%2C");
   const [quoteResponseList, setQuoteResponseList] = useState<string[]>([]);
+  const [refreshNotification, setRefreshNotification] = useState<string | null>(null);
 
-  const blankQuoteListMessage = ticketList.length === 0 
-    ? (<Text style={styles.noResult}>Nenhuma ação adicionada</Text>) 
-    : null;
+  const getQuoteList = async () => {
+    const response = await axios.get(`${BASE_URL}/quote/${ticketListString}`);
+    const quoteList = response.data.results;
+    setQuoteResponseList(quoteList);
+    setRefreshNotification('A lista foi atualizada');
+  };
 
   useEffect(() => {
-    axios.get(`${BASE_URL}/quote/${ticketListString}`)
-      .then((result) => {
-        if (result && !result?.error) setQuoteResponseList(result.data.results);
-      })
+    getQuoteList();
   }, []);
+
+  useEffect(() => {
+    if (refreshNotification) {
+      setTimeout(() => {
+        setRefreshNotification(null);
+      }, 3000);
+    }
+  }, [refreshNotification]);
 
   return (
     <View>
-      <Header />
+      <Header refreshCallback={getQuoteList} />
+      {refreshNotification && <Notify label={refreshNotification} duration={3000} />}
       <FlatList
         data={quoteResponseList}
         renderItem={({ item }) => <ListItem key={item?.symbol} quote={item} />}
       />
-      {blankQuoteListMessage}
+      {ticketList.length === 0 && (
+        <Text style={styles.noResult}>Nenhuma ação adicionada</Text>
+      )}
     </View>
   );
 }
