@@ -2,7 +2,8 @@ import {
   FlatList,
   View,
   Text,
-  StyleSheet
+  StyleSheet,
+  Alert
 } from "react-native";
 import { Header } from "../../components/Header";
 import { ListItem } from "../../components/ListItem";
@@ -10,33 +11,37 @@ import { Notify } from "../../components/Notify";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../config/axios";
-import { MMKV } from 'react-native-mmkv'
-
-const storage = new MMKV({ id: 'quote_list' })
+import { storage } from '../../config/storage';
 
 export function List() {
-  // const ticketList = [
-  //   "PETR4",
-  //   "VALE3",
-  //   "ITUB4",
-  //   "BBDC4",
-  //   "ABEV3",
-  //   "BBAS3",
-  //   "PETR3",
-  //   "B3SA3",
-  //   "BDIV11",
-  // ];
-  const ticketList = JSON.parse(storage.getString('list') || '[]');
-  const ticketListString = ticketList.join("%2C");
   const [quoteResponseList, setQuoteResponseList] = useState<string[]>([]);
   const [refreshNotification, setRefreshNotification] = useState<string | null>(null);
 
+  const [ticketList, setTicketList] = useState<string[]>([]);
+
+  const getTicketList = (callback?: () => any): void => {
+    const list = JSON.parse(storage.getString('list') || '[]');
+    setTicketList(list);
+    callback && callback();
+  }
+
   const getQuoteList = async () => {
-    const response = await axios.get(`${BASE_URL}/quote/${ticketListString}`);
-    const quoteList = response.data.results;
-    setQuoteResponseList(quoteList);
-    setRefreshNotification('A lista foi atualizada');
+    getTicketList(() => {
+      const ticketListString = ticketList.join("%2C");
+      axios.get(`${BASE_URL}/quote/${ticketListString}`)
+        .then(response => {
+          const quoteList = response.data.results;
+          setQuoteResponseList(quoteList);
+          setRefreshNotification('A lista foi atualizada');
+        })
+        .catch(error => {
+          Alert.alert('Erro', 'Não foi possível carregar a lista de ações');
+        });
+    });
+
+    console.log(ticketList);
   };
+  
 
   useEffect(() => {
     getQuoteList();
@@ -44,9 +49,11 @@ export function List() {
 
   useEffect(() => {
     if (refreshNotification) {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         setRefreshNotification(null);
       }, 3000);
+
+      return () => clearTimeout(timeout);
     }
   }, [refreshNotification]);
 

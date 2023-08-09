@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Lock } from '../screens/Lock';
 import { List } from '../screens/List';
 import { Add } from '../screens/Add';
+import { Config } from '../screens/Config';
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -25,6 +26,11 @@ export function AppRoutes() {
       <Screen
         name="Add"
         component={Add}
+      />
+
+      <Screen
+        name="Config"
+        component={Config}
       />
     </Navigator>
   );
