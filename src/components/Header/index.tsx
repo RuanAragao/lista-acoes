@@ -4,7 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 
 interface HeaderProps {
-  refreshCallback: () => void;
+  refreshCallback?: () => void;
 }
 
 export function Header({ refreshCallback }: HeaderProps) {
@@ -30,7 +30,7 @@ export function Header({ refreshCallback }: HeaderProps) {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => {}}
+            onPress={() => navigate('Config')}
           >
             <Feather name="settings" size={24} color="#FFFFFF" />
           </TouchableOpacity>
